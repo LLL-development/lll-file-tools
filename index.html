@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>File Toolkit — ZIP, Rename, Hash & Metadata Tools</title>
+<meta name="description" content="Free browser-based file tools: extract & create ZIP archives, batch rename files, compute checksums, and view file metadata. Nothing is uploaded." />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+<link rel="stylesheet" href="css/styles.css" />
+<script>
+  (function () {
+    var stored = localStorage.getItem("fileToolkit.theme");
+    var theme = stored === "light" || stored === "dark"
+      ? stored
+      : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <img src="assets/logo.svg" alt="File Toolkit logo" />
+    <span class="brand-name" data-i18n="brand">File Toolkit</span>
+  </div>
+  <div class="header-actions">
+    <div class="select-wrap">
+      <select id="langSelect" aria-label="Language">
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+        <option value="zh">中文</option>
+      </select>
+    </div>
+    <button id="themeToggle" class="icon-btn" type="button" data-i18n-aria-label="toggleTheme" aria-label="Toggle theme">
+      <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <section id="homeView">
+    <div class="hero">
+      <h1 data-i18n="heroTitle">Everyday file tools, right in your browser</h1>
+      <p data-i18n="heroDesc">Extract and create ZIPs, batch-rename files, generate checksums, and inspect metadata. Nothing is uploaded — every operation runs locally on your device.</p>
+      <span class="badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span data-i18n="heroBadge">100% private · no uploads</span>
+      </span>
+    </div>
+
+    <div class="tool-grid">
+      <button class="tool-card" data-target="zipExtract">
+        <span class="tool-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
+        </span>
+        <h3 data-i18n="tool_zipExtract_title">ZIP Extractor</h3>
+        <p data-i18n="tool_zipExtract_desc">Open a .zip archive and download the files inside it.</p>
+      </button>
+
+      <button class="tool-card" data-target="zipCreate">
+        <span class="tool-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/><path d="M1 3h22v5H1z"/><path d="M12 11v6M9 14h6"/></svg>
+        </span>
+        <h3 data-i18n="tool_zipCreate_title">ZIP Creator</h3>
+        <p data-i18n="tool_zipCreate_desc">Bundle multiple files into a single downloadable .zip.</p>
+      </button>
+
+      <button class="tool-card" data-target="rename">
+        <span class="tool-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+        </span>
+        <h3 data-i18n="tool_rename_title">Rename Multiple Files</h3>
+        <p data-i18n="tool_rename_desc">Batch rename files with prefixes, find & replace, or numbering.</p>
+      </button>
+
+      <button class="tool-card" data-target="hash">
+        <span class="tool-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg>
+        </span>
+        <h3 data-i18n="tool_hash_title">File Hash & Checksum</h3>
+        <p data-i18n="tool_hash_desc">Compute MD5, SHA-1, SHA-256 and SHA-512 for any file.</p>
+      </button>
+
+      <button class="tool-card" data-target="metadata">
+        <span class="tool-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6M9 11h2"/></svg>
+        </span>
+        <h3 data-i18n="tool_metadata_title">File Metadata Viewer</h3>
+        <p data-i18n="tool_metadata_desc">Inspect size, type, dates and dimensions of your files.</p>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== ZIP Extractor panel ===== -->
+  <section class="panel" id="panel-zipExtract" data-panel>
+    <div class="panel-header">
+      <button class="back-btn" data-back>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <span data-i18n="back">All tools</span>
+      </button>
+      <h2 data-i18n="tool_zipExtract_title">ZIP Extractor</h2>
+    </div>
+
+    <label class="dropzone" id="zipExtractDrop">
+      <span data-i18n="dropzoneZip">Drag & drop a .zip file here, or click to browse</span>
+      <input type="file" id="zipExtractInput" accept=".zip,application/zip" />
+    </label>
+
+    <div class="progress" id="zipExtractProgress"><div class="progress-bar"></div></div>
+    <div class="status-msg" id="zipExtractStatus"></div>
+
+    <div class="toolbar" id="zipExtractToolbar" style="display:none">
+      <span id="zipExtractCount"></span>
+      <button class="btn btn-sm" id="zipExtractSelectAll" data-i18n="zipExtract_selectAll">Select all</button>
+      <button class="btn btn-sm btn-primary" id="zipExtractDownloadSelected" data-i18n="zipExtract_selected">Download selected</button>
+      <button class="btn btn-sm btn-primary" id="zipExtractDownloadAll" data-i18n="zipExtract_extractAll">Download all as .zip</button>
+    </div>
+
+    <div class="file-list" id="zipExtractList"></div>
+    <p class="empty-state" id="zipExtractEmpty" data-i18n="zipExtract_empty">No archive loaded yet.</p>
+  </section>
+
+  <!-- ===== ZIP Creator panel ===== -->
+  <section class="panel" id="panel-zipCreate" data-panel>
+    <div class="panel-header">
+      <button class="back-btn" data-back>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <span data-i18n="back">All tools</span>
+      </button>
+      <h2 data-i18n="tool_zipCreate_title">ZIP Creator</h2>
+    </div>
+
+    <label class="dropzone" id="zipCreateDrop">
+      <span data-i18n="dropzoneFilesMulti">Drag & drop any number of files here, or click to browse</span>
+      <input type="file" id="zipCreateInput" multiple />
+    </label>
+
+    <div class="toolbar" id="zipCreateToolbar" style="display:none">
+      <div class="field">
+        <label data-i18n="zipCreate_name">Archive name</label>
+        <input type="text" id="zipCreateName" value="archive" />
+      </div>
+      <span id="zipCreateCount"></span>
+      <button class="btn btn-sm" id="zipCreateClear" data-i18n="zipCreate_clear">Clear all</button>
+      <button class="btn btn-sm btn-primary" id="zipCreateBuild" data-i18n="zipCreate_create">Create & download .zip</button>
+    </div>
+
+    <div class="progress" id="zipCreateProgress"><div class="progress-bar"></div></div>
+    <div class="status-msg" id="zipCreateStatus"></div>
+
+    <div class="file-list" id="zipCreateList"></div>
+    <p class="empty-state" id="zipCreateEmpty" data-i18n="zipCreate_empty">No files added yet.</p>
+  </section>
+
+  <!-- ===== Rename panel ===== -->
+  <section class="panel" id="panel-rename" data-panel>
+    <div class="panel-header">
+      <button class="back-btn" data-back>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <span data-i18n="back">All tools</span>
+      </button>
+      <h2 data-i18n="tool_rename_title">Rename Multiple Files</h2>
+    </div>
+
+    <label class="dropzone" id="renameDrop">
+      <span data-i18n="dropzoneFilesMulti">Drag & drop any number of files here, or click to browse</span>
+      <input type="file" id="renameInput" multiple />
+    </label>
+
+    <div id="renameControls" style="display:none">
+      <div class="field-row" style="margin-top:16px">
+        <div class="field">
+          <label data-i18n="rename_find">Find</label>
+          <input type="text" id="renameFind" />
+        </div>
+        <div class="field">
+          <label data-i18n="rename_replace">Replace with</label>
+          <input type="text" id="renameReplace" />
+        </div>
+        <div class="field">
+          <label data-i18n="rename_prefix">Prefix</label>
+          <input type="text" id="renamePrefix" />
+        </div>
+        <div class="field">
+          <label data-i18n="rename_suffix">Suffix</label>
+          <input type="text" id="renameSuffix" />
+        </div>
+        <div class="field">
+          <label data-i18n="rename_case">Change case</label>
+          <select id="renameCase">
+            <option value="none" data-i18n="rename_caseNone">No change</option>
+            <option value="lower" data-i18n="rename_caseLower">lowercase</option>
+            <option value="upper" data-i18n="rename_caseUpper">UPPERCASE</option>
+            <option value="title" data-i18n="rename_caseTitle">Title Case</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-row" style="margin-top:12px">
+        <div class="checkbox-row">
+          <input type="checkbox" id="renameNumberingOn" />
+          <label for="renameNumberingOn" data-i18n="rename_numberingOn">Add numbering</label>
+        </div>
+        <div class="field">
+          <label data-i18n="rename_startAt">Start at</label>
+          <input type="number" id="renameStart" value="1" min="0" />
+        </div>
+        <div class="field">
+          <label data-i18n="rename_padding">Digits (padding)</label>
+          <input type="number" id="renamePadding" value="2" min="1" max="6" />
+        </div>
+        <div class="field" style="flex:1">
+          <label data-i18n="rename_pattern">Pattern ({n} = number, {name} = original name, {ext} = extension)</label>
+          <input type="text" id="renamePattern" value="{name}_{n}{ext}" />
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <span id="renameCount"></span>
+        <button class="btn btn-sm" id="renameClear" data-i18n="rename_clear">Clear all</button>
+        <button class="btn btn-sm btn-primary" id="renameDownload" data-i18n="rename_download">Download renamed files (.zip)</button>
+      </div>
+    </div>
+
+    <div class="progress" id="renameProgress"><div class="progress-bar"></div></div>
+    <div class="status-msg" id="renameStatus"></div>
+
+    <div class="file-list" id="renameList"></div>
+    <p class="empty-state" id="renameEmpty" data-i18n="rename_empty">No files added yet.</p>
+  </section>
+
+  <!-- ===== Hash panel ===== -->
+  <section class="panel" id="panel-hash" data-panel>
+    <div class="panel-header">
+      <button class="back-btn" data-back>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <span data-i18n="back">All tools</span>
+      </button>
+      <h2 data-i18n="tool_hash_title">File Hash & Checksum</h2>
+    </div>
+
+    <label class="dropzone" id="hashDrop">
+      <span data-i18n="dropzoneFilesMulti">Drag & drop any number of files here, or click to browse</span>
+      <input type="file" id="hashInput" multiple />
+    </label>
+
+    <div id="hashControls" style="display:none">
+      <div class="field-row" style="margin-top:16px">
+        <div class="field">
+          <label data-i18n="hash_algorithms">Algorithms</label>
+          <div class="field-row">
+            <div class="checkbox-row"><input type="checkbox" id="algMd5" checked /><label for="algMd5">MD5</label></div>
+            <div class="checkbox-row"><input type="checkbox" id="algSha1" checked /><label for="algSha1">SHA-1</label></div>
+            <div class="checkbox-row"><input type="checkbox" id="algSha256" checked /><label for="algSha256">SHA-256</label></div>
+            <div class="checkbox-row"><input type="checkbox" id="algSha512" /><label for="algSha512">SHA-512</label></div>
+          </div>
+        </div>
+      </div>
+      <div class="field" style="margin-top:12px">
+        <label data-i18n="hash_compare">Compare with expected checksum (optional)</label>
+        <input type="text" id="hashCompare" data-i18n-placeholder="hash_comparePlaceholder" placeholder="Paste a checksum to verify…" />
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-sm" id="hashClear" data-i18n="hash_clear">Clear all</button>
+      </div>
+    </div>
+
+    <div class="status-msg" id="hashStatus"></div>
+    <div id="hashResults"></div>
+    <p class="empty-state" id="hashEmpty" data-i18n="hash_empty">No files added yet.</p>
+  </section>
+
+  <!-- ===== Metadata panel ===== -->
+  <section class="panel" id="panel-metadata" data-panel>
+    <div class="panel-header">
+      <button class="back-btn" data-back>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <span data-i18n="back">All tools</span>
+      </button>
+      <h2 data-i18n="tool_metadata_title">File Metadata Viewer</h2>
+    </div>
+
+    <label class="dropzone" id="metadataDrop">
+      <span data-i18n="dropzoneFilesMulti">Drag & drop any number of files here, or click to browse</span>
+      <input type="file" id="metadataInput" multiple />
+    </label>
+
+    <div class="toolbar" id="metadataToolbar" style="display:none">
+      <button class="btn btn-sm" id="metadataClear" data-i18n="meta_clear">Clear all</button>
+    </div>
+
+    <div id="metadataResults"></div>
+    <p class="empty-state" id="metadataEmpty" data-i18n="meta_empty">No files added yet.</p>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <span>File Toolkit — all processing happens locally in your browser.</span>
+</footer>
+
+<script src="vendor/jszip.min.js"></script>
+<script src="vendor/spark-md5.min.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
